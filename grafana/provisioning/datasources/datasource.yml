@@ -1,0 +1,17 @@
+apiVersion: 1
+
+datasources:
+  - name: LearningAnalyticsPostgres
+    uid: LearningAnalyticsPostgres
+    type: postgres
+    access: proxy
+    url: postgres:5432
+    user: la_user
+    secureJsonData:
+      password: la_secret_change_me
+    jsonData:
+      database: learning_analytics
+      sslmode: disable
+      postgresVersion: 1600
+    isDefault: true
+    editable: true

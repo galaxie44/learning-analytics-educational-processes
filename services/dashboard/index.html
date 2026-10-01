@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Learning Analytics — Education Cloud</title>
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <header class="top">
+    <div>
+      <p class="eyebrow">UNITA · Cloud Environment for Education</p>
+      <h1>Learning Analytics of Educational Processes</h1>
+      <p class="subtitle">Pilotage des parcours, détection des risques et remédiations data-driven</p>
+    </div>
+    <div class="badge">SaaS · Private Cloud EVA</div>
+  </header>
+
+  <section class="kpis" id="kpis">
+    <article><span>Statements xAPI</span><strong id="kpi-statements">—</strong></article>
+    <article><span>Apprenants</span><strong id="kpi-learners">—</strong></article>
+    <article><span>À risque</span><strong id="kpi-risk">—</strong></article>
+    <article><span>Engagement moyen</span><strong id="kpi-engagement">—</strong></article>
+  </section>
+
+  <main class="grid">
+    <section class="panel">
+      <h2>Apprenants (triés par risque)</h2>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Apprenant</th>
+              <th>Engagement</th>
+              <th>Risque</th>
+              <th>Niveau</th>
+              <th>Quiz moyen</th>
+              <th>Activités</th>
+            </tr>
+          </thead>
+          <tbody id="learners-body"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>Remédiations recommandées</h2>
+      <ul id="remediations" class="remediation-list"></ul>
+    </section>
+
+    <section class="panel full">
+      <h2>KPI par cours</h2>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Cours</th>
+              <th>Apprenants</th>
+              <th>Statements</th>
+              <th>Score quiz moyen</th>
+            </tr>
+          </thead>
+          <tbody id="courses-body"></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    Team 1 · SIGLIS M1 Cloud Computing I · Dashboard stakeholders (enseignants / coordinateurs)
+  </footer>
+  <script src="/app.js"></script>
+</body>
+</html>

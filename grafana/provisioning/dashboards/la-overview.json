@@ -1,0 +1,74 @@
+{
+  "annotations": { "list": [] },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": null,
+  "links": [],
+  "panels": [
+    {
+      "datasource": { "type": "postgres", "uid": "LearningAnalyticsPostgres" },
+      "fieldConfig": { "defaults": {}, "overrides": [] },
+      "gridPos": { "h": 8, "w": 8, "x": 0, "y": 0 },
+      "id": 1,
+      "targets": [
+        {
+          "format": "table",
+          "rawSql": "SELECT COUNT(*) AS statements FROM statements;",
+          "refId": "A"
+        }
+      ],
+      "title": "xAPI Statements",
+      "type": "stat"
+    },
+    {
+      "datasource": { "type": "postgres", "uid": "LearningAnalyticsPostgres" },
+      "gridPos": { "h": 8, "w": 8, "x": 8, "y": 0 },
+      "id": 2,
+      "targets": [
+        {
+          "format": "table",
+          "rawSql": "SELECT COUNT(*) AS learners FROM learner_analytics;",
+          "refId": "A"
+        }
+      ],
+      "title": "Learners",
+      "type": "stat"
+    },
+    {
+      "datasource": { "type": "postgres", "uid": "LearningAnalyticsPostgres" },
+      "gridPos": { "h": 8, "w": 8, "x": 16, "y": 0 },
+      "id": 3,
+      "targets": [
+        {
+          "format": "table",
+          "rawSql": "SELECT COUNT(*) AS at_risk FROM learner_analytics WHERE risk_level = 'high';",
+          "refId": "A"
+        }
+      ],
+      "title": "At-risk learners",
+      "type": "stat"
+    },
+    {
+      "datasource": { "type": "postgres", "uid": "LearningAnalyticsPostgres" },
+      "gridPos": { "h": 10, "w": 24, "x": 0, "y": 8 },
+      "id": 4,
+      "targets": [
+        {
+          "format": "table",
+          "rawSql": "SELECT actor_name, engagement_score, risk_score, risk_level, remediation FROM learner_analytics ORDER BY risk_score DESC LIMIT 20;",
+          "refId": "A"
+        }
+      ],
+      "title": "Learner risk table",
+      "type": "table"
+    }
+  ],
+  "schemaVersion": 39,
+  "tags": ["learning-analytics", "xapi"],
+  "templating": { "list": [] },
+  "time": { "from": "now-24h", "to": "now" },
+  "title": "Learning Analytics Overview",
+  "uid": "la-overview",
+  "version": 1
+}

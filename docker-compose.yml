@@ -1,0 +1,192 @@
+x-build-proxy: &build-proxy
+  HTTP_PROXY: ${HTTP_PROXY:-}
+  HTTPS_PROXY: ${HTTPS_PROXY:-}
+  NO_PROXY: ${NO_PROXY:-}
+  http_proxy: ${http_proxy:-}
+  https_proxy: ${https_proxy:-}
+  no_proxy: ${no_proxy:-}
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: la-postgres
+    restart: unless-stopped
+    env_file: [.env]
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-la_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-la_secret_change_me}
+      POSTGRES_DB: ${POSTGRES_DB:-learning_analytics}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./services/lrs-api/init.sql:/docker-entrypoint-initdb.d/01-init.sql:ro
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-la_user} -d ${POSTGRES_DB:-learning_analytics}"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+    networks: [la-net]
+
+  lrs-api:
+    build:
+      context: ./services/lrs-api
+      args:
+        <<: *build-proxy
+    container_name: la-lrs-api
+    restart: unless-stopped
+    env_file: [.env]
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-la_user}:${POSTGRES_PASSWORD:-la_secret_change_me}@postgres:5432/${POSTGRES_DB:-learning_analytics}
+      LRS_BASIC_USER: ${LRS_BASIC_USER:-lrs}
+      LRS_BASIC_PASS: ${LRS_BASIC_PASS:-lrs_secret_change_me}
+    ports:
+      - "8200:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          memory: 192M
+    networks: [la-net]
+
+  xapi-generator:
+    build:
+      context: ./services/xapi-generator
+      args:
+        <<: *build-proxy
+    container_name: la-xapi-generator
+    restart: unless-stopped
+    env_file: [.env]
+    environment:
+      LRS_URL: http://lrs-api:8000
+      LRS_BASIC_USER: ${LRS_BASIC_USER:-lrs}
+      LRS_BASIC_PASS: ${LRS_BASIC_PASS:-lrs_secret_change_me}
+      STUDENT_COUNT: "25"
+      STATEMENTS_PER_STUDENT: "40"
+      LOOP_SECONDS: "120"
+    depends_on:
+      lrs-api:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          memory: 128M
+    networks: [la-net]
+
+  analytics-worker:
+    build:
+      context: ./services/analytics-worker
+      args:
+        <<: *build-proxy
+    container_name: la-analytics-worker
+    restart: unless-stopped
+    env_file: [.env]
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-la_user}:${POSTGRES_PASSWORD:-la_secret_change_me}@postgres:5432/${POSTGRES_DB:-learning_analytics}
+      LOOP_SECONDS: "60"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      lrs-api:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+    networks: [la-net]
+
+  analytics-api:
+    build:
+      context: ./services/analytics-api
+      args:
+        <<: *build-proxy
+    container_name: la-analytics-api
+    restart: unless-stopped
+    env_file: [.env]
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-la_user}:${POSTGRES_PASSWORD:-la_secret_change_me}@postgres:5432/${POSTGRES_DB:-learning_analytics}
+    ports:
+      - "8210:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          memory: 192M
+    networks: [la-net]
+
+  dashboard:
+    build:
+      context: ./services/dashboard
+      args:
+        <<: *build-proxy
+    container_name: la-dashboard
+    restart: unless-stopped
+    env_file: [.env]
+    environment:
+      ANALYTICS_API_URL: http://analytics-api:8000
+    ports:
+      - "8300:80"
+    depends_on:
+      - analytics-api
+    deploy:
+      resources:
+        limits:
+          memory: 64M
+    networks: [la-net]
+
+  grafana:
+    image: grafana/grafana:10.4.5
+    container_name: la-grafana
+    restart: unless-stopped
+    profiles: ["full"]
+    env_file: [.env]
+    environment:
+      GF_SECURITY_ADMIN_USER: ${GRAFANA_ADMIN_USER:-admin}
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD:-admin_change_me}
+      GF_USERS_ALLOW_SIGN_UP: "false"
+      GF_SERVER_ROOT_URL: http://localhost:3000
+    volumes:
+      - ./grafana/provisioning:/etc/grafana/provisioning:ro
+    ports:
+      - "3000:3000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+    networks: [la-net]
+
+  portainer:
+    image: portainer/portainer-ce:2.21.4
+    container_name: la-portainer
+    restart: unless-stopped
+    profiles: ["ops"]
+    env_file: [.env]
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - portainer_data:/data
+    ports:
+      - "9000:9000"
+    deploy:
+      resources:
+        limits:
+          memory: 128M
+    networks: [la-net]
+
+volumes:
+  pgdata:
+  portainer_data:
+
+networks:
+  la-net:
+    driver: bridge
