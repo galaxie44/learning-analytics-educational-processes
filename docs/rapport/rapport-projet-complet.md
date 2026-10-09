@@ -107,7 +107,7 @@ Communication interne : réseau Docker `la-net`. Le dashboard proxifie `/api/` v
 | GOLD | Healthchecks + restart | 30 jours | Remédiations |
 | PLATINUM | Monitoring + alerting (perspective) | 90 jours | ML + alerting |
 
-**Implémentation PoC** : healthchecks Docker, `restart: unless-stopped`, limites mémoire pour stabilité EVA.
+**Implémentation PoC** : healthchecks Docker, `restart: on-failure:3` (pas de boucle illimitée — consigne Proxmox/EVA), limites mémoire pour stabilité EVA.
 
 ### 3.4 Tests
 

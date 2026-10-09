@@ -31,7 +31,8 @@
 
 ## Jalons dates (rappel)
 
-- 12 oct. — rapport initial
+- **12 oct. 23:59** — **Docker Labs Report** (devoir séparé !) → voir `docs/DOCKER-LABS-REPORT.md`
+- 12 oct. — rapport initial projet
 - 13/14 oct. — présentation + quiz
 - 21/22 oct. — soutenance finale
 

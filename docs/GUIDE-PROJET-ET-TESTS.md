@@ -142,7 +142,7 @@ Ce n’est pas facturé en PoC, mais le **rapport** doit montrer la **traduction
 
 | Promesse | Implémentation actuelle |
 |----------|-------------------------|
-| Disponibilité | `restart: unless-stopped`, healthchecks |
+| Disponibilité | `restart: on-failure:3`, healthchecks |
 | Sécurité LRS | Auth HTTP Basic (user/pass dans `.env`) |
 | Données | Synthétiques / pseudonymisées (pas de vrais étudiants) |
 | Rétention | Postgres (durée configurable ; pas de purge auto en PoC) |

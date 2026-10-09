@@ -10,7 +10,7 @@ services:
   postgres:
     image: postgres:16-alpine
     container_name: la-postgres
-    restart: unless-stopped
+    restart: on-failure:3
     env_file: [.env]
     environment:
       POSTGRES_USER: ${POSTGRES_USER:-la_user}
@@ -38,7 +38,7 @@ services:
       args:
         <<: *build-proxy
     container_name: la-lrs-api
-    restart: unless-stopped
+    restart: on-failure:3
     env_file: [.env]
     environment:
       DATABASE_URL: postgresql://${POSTGRES_USER:-la_user}:${POSTGRES_PASSWORD:-la_secret_change_me}@postgres:5432/${POSTGRES_DB:-learning_analytics}
@@ -61,7 +61,7 @@ services:
       args:
         <<: *build-proxy
     container_name: la-xapi-generator
-    restart: unless-stopped
+    restart: on-failure:3
     env_file: [.env]
     environment:
       LRS_URL: http://lrs-api:8000
@@ -85,7 +85,7 @@ services:
       args:
         <<: *build-proxy
     container_name: la-analytics-worker
-    restart: unless-stopped
+    restart: on-failure:3
     env_file: [.env]
     environment:
       DATABASE_URL: postgresql://${POSTGRES_USER:-la_user}:${POSTGRES_PASSWORD:-la_secret_change_me}@postgres:5432/${POSTGRES_DB:-learning_analytics}
@@ -107,7 +107,7 @@ services:
       args:
         <<: *build-proxy
     container_name: la-analytics-api
-    restart: unless-stopped
+    restart: on-failure:3
     env_file: [.env]
     environment:
       DATABASE_URL: postgresql://${POSTGRES_USER:-la_user}:${POSTGRES_PASSWORD:-la_secret_change_me}@postgres:5432/${POSTGRES_DB:-learning_analytics}
@@ -128,7 +128,7 @@ services:
       args:
         <<: *build-proxy
     container_name: la-dashboard
-    restart: unless-stopped
+    restart: on-failure:3
     env_file: [.env]
     environment:
       ANALYTICS_API_URL: http://analytics-api:8000
@@ -145,7 +145,7 @@ services:
   grafana:
     image: grafana/grafana:10.4.5
     container_name: la-grafana
-    restart: unless-stopped
+    restart: on-failure:3
     profiles: ["full"]
     env_file: [.env]
     environment:
@@ -169,7 +169,7 @@ services:
   portainer:
     image: portainer/portainer-ce:2.21.4
     container_name: la-portainer
-    restart: unless-stopped
+    restart: on-failure:3
     profiles: ["ops"]
     env_file: [.env]
     volumes:

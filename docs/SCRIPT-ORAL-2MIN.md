@@ -38,7 +38,7 @@ Nous réutilisons des briques existantes (Postgres, nginx) et développons le gl
 
 Résultat PoC : ~2300 statements, 25 learners, distribution low/medium/high, smoke test `PASSED`. Accès démo : dashboard `:8300`, overview `/api/overview`.
 
-SLA FREE/GOLD/PLATINUM mappé sur healthchecks, restart policies et profondeur analytics. Données synthétiques pour la confidentialité.
+SLA FREE/GOLD/PLATINUM mappé sur healthchecks, `restart: on-failure:3` (pas de boucle illimitée) et profondeur analytics. Données synthétiques pour la confidentialité.
 
 Perspectives : LMS réel, RGPD renforcé, orchestration Swarm/Kubernetes.
 

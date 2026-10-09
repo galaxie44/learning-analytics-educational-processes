@@ -92,6 +92,7 @@ Vérifie healthchecks, présence de statements xAPI, calcul d’analytics (learn
 
 ## Documentation projet
 
+- **[docs/DOCKER-LABS-REPORT.md](docs/DOCKER-LABS-REPORT.md)** — devoir Labs 5–8 (deadline 12 oct.)
 - **[docs/EXPLICATION-SIMPLE.md](docs/EXPLICATION-SIMPLE.md)** — explication sans jargon + légende capture API
 - **[docs/SCRIPT-ORAL-2MIN.md](docs/SCRIPT-ORAL-2MIN.md)** — script oral 2 min (avec / sans jargon)
 - **[docs/livrables/](docs/livrables/)** — PowerPoint + Word générés
@@ -118,4 +119,4 @@ BRUEY Bastien · CLEMENCEAU Edouard · LALANNE Titoan · LI Jiale · MINBIELLE Y
 | GOLD | healthchecks + restart | 30 jours | remédiations |
 | PLATINUM | monitoring + quotas | 90 jours | ML + alerting |
 
-Implémenté techniquement : healthchecks, `restart: unless-stopped`, auth Basic LRS, secrets via env, données synthétiques pseudonymisées.
+Implémenté techniquement : healthchecks, `restart: on-failure:3` (limité — consigne EVA/Proxmox), auth Basic LRS, secrets via env, données synthétiques pseudonymisées.
